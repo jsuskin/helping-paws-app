@@ -1,0 +1,25 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #fcf9ed
+}
+
+li {
+  list-style-type: none;
+}
+
+.animal-card {
+  // padding: 3rem;
+  // margin: 2rem;
+  // box-shadow: 10px 5px 5px #020;
+  border: 1px solid black;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+}
