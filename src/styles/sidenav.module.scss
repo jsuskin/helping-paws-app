@@ -1,0 +1,59 @@
+.sidenav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  font-size: small;
+  box-shadow: 2px 0px 1px 1px #f4f5fa;
+  height: 100vh;
+  // background-color: #F3B2B2;
+  background-color: #f2f2f2;
+  z-index: 10;
+
+  hr {
+    margin: 2em 0;
+    border: 1px solid #f4f5fa;
+  }
+}
+
+.sidenav__logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    margin: 10px 0;
+    stroke-width: 20;
+  }
+}
+
+.sidenav__search {
+  margin: 2em 0;
+
+  input {
+    padding: 8px 10px;
+    border: 1px solid #f4f5fa;
+    box-shadow: 0px 1px 0px 1px #f4f5fa;
+    border-radius: 0px 50px 50px 0px;
+    position: relative;
+    outline-width: 0;
+  }
+
+  i {
+    right: 30px;
+    position: relative;
+  }
+}
+
+.sidenav__animal-categories,
+.sidenav__user-actions {
+  li {
+    padding: 10px 15px;
+
+    a,
+    a:visited {
+      text-decoration: none;
+      color: #808080;
+    }
+  }
+}

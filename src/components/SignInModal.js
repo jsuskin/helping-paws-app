@@ -13,8 +13,8 @@ export default function SignInModal({ showModal, setShowModal, setToken }) {
 
   const baseUrl = "http://localhost:4000/user";
 
-  const handleChange = (e) =>
-    setFormInfo({ ...formInfo, [e.target.name]: e.target.value });
+  const handleChange = ({target}) =>
+    setFormInfo({ ...formInfo, [target.name]: target.value });
 
   const handleLogin = (e) => {
     e.preventDefault();
