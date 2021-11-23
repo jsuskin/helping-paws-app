@@ -1,10 +1,10 @@
-import UserArea from './UserArea'
+import React from "react";
 
-export default function Header({ userToken, setUserToken }) {
+export default function Header({ showSignInModal, setShowSignInModal, token }) {
   return (
-    <nav>
-      <h1 className='app-title'>Helping Paws</h1>
-      <UserArea userToken={userToken} setUserToken={setUserToken} />
-    </nav>
+    <div className='header'>
+      {token.length ? <p>logged in</p> : <a href='#' onClick={() => setShowSignInModal(!showSignInModal)}>Sign In/Register</a>}
+      
+    </div>
   );
 }

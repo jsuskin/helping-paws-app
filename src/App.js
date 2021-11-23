@@ -1,29 +1,32 @@
+import { useState } from "react";
 import "./app.scss";
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import CardsTable from "./components/CardsTable";
+import Sidenav from "./components/Sidenav";
 import Header from "./components/Header";
-import NewAnimalForm from "./components/NewAnimalForm";
+import SignInModal from "./components/SignInModal";
+import AddAnimalModal from "./components/AddAnimalModal";
 
-const animalsData = "http://localhost:4000/animals";
-
-function App() {
-  const [animals, setAnimals] = useState([]);
-  const [userToken, setUserToken] = useState('');
-
-  useEffect(() => {
-    axios.get(animalsData).then(res => {
-      setAnimals(res.data)
-    });
-  }, []);
+export default function App() {
+  const [showSignInModal, setShowSignInModal] = useState(false);
+  const [showAddAnimalModal, setShowAddAnimalModal] = useState(false);
+  const [token, setToken] = useState("");
 
   return (
-    <div className='app'>
-      <Header userToken={userToken} setUserToken={setUserToken} />
-      <CardsTable animals={animals} />
-      <NewAnimalForm animals={animals} setAnimals={setAnimals} />
-    </div>
+    <>
+      <Sidenav showAddAnimalModal={showAddAnimalModal} setShowAddAnimalModal={setShowAddAnimalModal} />
+      <Header
+        showSignInModal={showSignInModal}
+        setShowSignInModal={setShowSignInModal}
+        token={token}
+      />
+      <SignInModal
+        showModal={showSignInModal}
+        setShowModal={setShowSignInModal}
+        setToken={setToken}
+      />
+      <AddAnimalModal
+        showModal={showAddAnimalModal}
+        setShowModal={setShowAddAnimalModal}
+      />
+    </>
   );
 }
-
-export default App;

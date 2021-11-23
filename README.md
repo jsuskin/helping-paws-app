@@ -1,70 +1,320 @@
-# Getting Started with Create React App
+```javascript
+// App.js
+import "./app.scss";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import CardsTable from "./components/CardsTable";
+import Header from "./components/Header";
+import NewAnimalForm from "./components/NewAnimalForm";
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+const animalsData = "http://localhost:4000/animals";
 
-## Available Scripts
+export default function App() {
+  const [animals, setAnimals] = useState([]);
+  const [userToken, setUserToken] = useState("");
 
-In the project directory, you can run:
+  useEffect(() => {
+    axios.get(animalsData).then(res => setAnimals(res.data));
+  }, []);
 
-### `yarn start`
+  return (
+    <div className='app'>
+      <Header userToken={userToken} setUserToken={setUserToken} />
+      <CardsTable animals={animals} />
+      {/* <NewAnimalForm animals={animals} setAnimals={setAnimals} /> */}
+    </div>
+  );
+}
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```javascript
+/// Header.js
+import UserArea from "./UserArea";
+import headerImg from "../assets/svg/header_img.svg";
 
-### `yarn test`
+export default function Header({ userToken, setUserToken }) {
+  return (
+    <nav>
+      <div className='logo'>
+        <h1 className='app-title'>Helping Paws</h1>
+        {/* <img src={headerImg} width='10%' height='10%' /> */}
+      </div>
+      <UserArea userToken={userToken} setUserToken={setUserToken} />
+    </nav>
+  );
+}
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
 
-### `yarn build`
+```javascript
+// CardsTable.js
+import React from "react";
+import AnimalCard from "./AnimalCard";
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+export default function CardsTable({ animals }) {
+  // console.log(animals)
+  return (
+    <div className='cards-table'>
+      <ul className='cards-list'>
+        {animals.map((animal) => (
+          <AnimalCard key={animal._id} animal={animal} />
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```javascript
+// AnimalCard.js
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+import React from "react";
 
-### `yarn eject`
+export default function AnimalCard({ animal }) {
+  const {
+    animalName,
+    species,
+    breed,
+    currentLocation,
+    age,
+    medicalHistory,
+    description,
+  } = animal;
+  return (
+    <li className='animal-card'>
+      <div className='animal-container'>
+        <div className='animal-name'>
+          <h2>{animalName}</h2>
+        </div>
+        <div className='animal-demo-info-container'>
+          <ul className='animal-demo-info' style={{display: 'flex', justifyContent: "space-between"}}>
+            <li>{`Age: ${age}`}</li>
+            <li>{`Species: ${species}`}</li>
+            <li>{`Breed: ${breed}`}</li>
+          </ul>
+        </div>
+        <h3>{`Currently At: ${currentLocation}`}</h3>
+        <div className='animal-description'>
+          <p>{description}</p>
+        </div>
+      </div>
+    </li>
+  );
+}
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+```
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```javascript
+// NewAnimalForm.js
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+import axios from "axios";
+import { useState } from "react";
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+export default function NewAnimalForm({animals,setAnimals}) {
+  const [submissionData, setSubmissionData] = useState({
+    animalName: "",
+    species: "",
+    breed: "",
+    currentLocation: "",
+    age: "",
+    sex: 'unk',
+    medicalHistory: [],
+    description: "",
+  });
 
-## Learn More
+  const baseUrl = "http://localhost:4000/animals";
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  const handleChange = (e) => {
+    e.preventDefault();
+    const cur = e.target;
+    setSubmissionData({ ...submissionData, [cur.name]: cur.value });
+  };
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const {
+      animalName,
+      species,
+      breed,
+      currentLocation,
+      age,
+      sex,
+      medicalHistory,
+      description,
+    } = submissionData;
+    axios.post(baseUrl, {
+      animalName: animalName,
+      species: species,
+      breed: breed,
+      currentLocation: currentLocation,
+      age: age,
+      sex: sex,
+      medicalHistory: medicalHistory,
+      description: description,
+    }).then(res => setAnimals([...animals, res.data])).catch(err => console.log(err));
+  };
 
-### Code Splitting
+  return (
+    <form onSubmit={handleSubmit}>
+      <input
+        name='animalName'
+        placeholder='Enter Animal Name'
+        value={submissionData.animalName}
+        onChange={handleChange}
+      />
+      <input
+        name='description'
+        placeholder='Enter Animal Description'
+        value={submissionData.description}
+        onChange={handleChange}
+      />
+      <input
+        name='age'
+        placeholder='Enter Animal Age'
+        value={submissionData.age}
+        onChange={handleChange}
+      />
+      <select
+        name='sex'
+        value={submissionData.sex}
+        onChange={handleChange}
+      >
+        <option>
+          unk
+        </option>
+        <option>M</option>
+        <option>F</option>
+      </select>
+      <input
+        name='species'
+        placeholder='Enter Animal Species'
+        value={submissionData.species}
+        onChange={handleChange}
+      />
+      <input
+        name='breed'
+        placeholder='Enter Animal Breed'
+        value={submissionData.breed}
+        onChange={handleChange}
+      />
+      <input
+        name='currentLocation'
+        placeholder="Enter Animal's Current Location"
+        value={submissionData.currentLocation}
+        onChange={handleChange}
+      />
+      <button type='submit'>Add Animal</button>
+    </form>
+  );
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
 
-### Analyzing the Bundle Size
+```javascript
+// UserArea.js
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+import { useState } from 'react';
+import axios from "axios";
 
-### Making a Progressive Web App
+export default function UserArea({ userToken, setUserToken }) {
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [signInInfo, setSignInInfo] = useState({ email: "", password: "" });
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+  const baseUrl = "http://localhost:4000/user";
 
-### Advanced Configuration
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { email, password } = signInInfo;
+    axios
+      .post(baseUrl + "/login", { email: email, password: password })
+      .then((res) => setUserToken(res.data))
+      .catch((err) => console.log(err));
+    setSignInInfo({ email: "", password: "" });
+    setShowSignIn(!showSignIn);
+  };
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+  const handleChange = (e) => {
+    e.preventDefault();
+    setSignInInfo({ ...signInInfo, [e.target.name]: e.target.value });
+  };
 
-### Deployment
+  return (
+    <>
+      <div className="login-logout">
+        {userToken.length ? (
+          <a href='#' onClick={() => setUserToken("")}>
+            logout
+          </a>
+        ) : (
+          <a href='#' onClick={() => setShowSignIn(!showSignIn)}>
+            login
+          </a>
+        )}
+      </div>
+      {showSignIn ? (
+        <form onSubmit={handleSubmit}>
+          <input
+            type='text'
+            name='email'
+            onChange={handleChange}
+            placeholder='Enter email'
+          />
+          <input
+            type='text'
+            name='password'
+            onChange={handleChange}
+            placeholder='Enter Password'
+          />
+          <input type='submit' />
+        </form>
+      ) : null}
+    </>
+  );
+}
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```
 
-### `yarn build` fails to minify
+```scss
+// app.scss
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  // background: #fcf9ed
+}
+
+nav {
+  // position: absolute;
+  // top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  // border: 1px dotted red;
+  width: 100%;
+  padding: 0;
+
+  .logo, .login-logout { padding: 10px 33px; }
+}
+
+li {
+  list-style-type: none;
+}
+
+.animal-card {
+  padding: 3rem;
+  margin: 2rem;
+  box-shadow: 4px 2.5px 2.5px #020;
+  border-radius: 10px;
+  border: 1px solid black;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+}
+```
