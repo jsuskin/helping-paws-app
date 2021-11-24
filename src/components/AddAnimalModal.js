@@ -21,7 +21,16 @@ export default function AddAnimalModal({ showModal, setShowModal }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const {animalName, age, species, breed, sex, currentLocation, description} = formData;
+    const {
+      animalName,
+      age,
+      species,
+      breed,
+      sex,
+      currentLocation,
+      description,
+    } = formData;
+    
     axios
       .post(baseUrl, {
         animalName: animalName,
@@ -59,7 +68,10 @@ export default function AddAnimalModal({ showModal, setShowModal }) {
           &times;
         </span>
         <div className='user-action-form'>
-          <AddAnimalForm handleChange={handleChange} handleSubmit={handleSubmit} />
+          <AddAnimalForm
+            handleChange={handleChange}
+            handleSubmit={handleSubmit}
+          />
         </div>
       </div>
     </div>

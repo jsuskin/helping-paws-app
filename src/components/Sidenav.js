@@ -17,6 +17,7 @@ export default function Sidenav({showAddAnimalModal, setShowAddAnimalModal}) {
           className='sidenav__logo'
           width='150px'
           height='150px'
+          alt='logo'
         />
       </div>
       <hr />

@@ -3,8 +3,8 @@ import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
 import axios from "axios";
 
-export default function SignInModal({ showModal, setShowModal, setToken }) {
-  const [formInfo, setFormInfo] = useState({
+export default function SignInModal({ showModal, setShowModal, user, setUser }) {
+  const [signInData, setSignInData] = useState({
     username: "",
     email: "",
     password: "",
@@ -13,27 +13,32 @@ export default function SignInModal({ showModal, setShowModal, setToken }) {
 
   const baseUrl = "http://localhost:4000/user";
 
-  const handleChange = ({target}) =>
-    setFormInfo({ ...formInfo, [target.name]: target.value });
+  const loginPost = (email, password) =>
+    axios.post(baseUrl + "/login", { email: email, password: password });
 
-  const handleLogin = (e) => {
+  const handleChange = ({target}) =>
+    setSignInData({ ...signInData, [target.name]: target.value });
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const { email, password } = formInfo;
-    // console.log(email, password);
-    axios
-      .post(baseUrl + "/login", { email: email, password: password })
-      .then((res) => {
-        setToken(res.data);
-        console.log(res.data)
-      })
-      .catch((err) => console.log(err));
-    setFormInfo({ username: "", email: "", password: "", confirmPassword: "" });
+    const { email, password } = signInData;
+    const response = await loginPost(email, password);
+
+    setUser(response.data);
+    localStorage.setItem("user", JSON.stringify(response.data));
+
+    setSignInData({ username: "", email: "", password: "", confirmPassword: "" });
     setShowModal(!showModal);
   };
+
   const handleRegister = (e) => {
+    const { email, username, password, confirmPassword } = signInData;
     e.preventDefault();
-    console.log(formInfo);
+    axios.post(baseUrl + '/register', { username: username, email: email, password: password}).then(res => {
+      if(password !== confirmPassword) throw new Error('passwords do not match')
+    })
   };
+
   return (
     <div
       className='sign-in-modal modal'

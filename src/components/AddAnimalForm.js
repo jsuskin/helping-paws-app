@@ -1,4 +1,6 @@
-export default function AddAnimalForm({handleChange, handleSubmit}) {
+import { useState } from "react";
+
+export default function AddAnimalForm({ handleChange, handleSubmit }) {
   return (
     <form onSubmit={handleSubmit}>
       <input
